@@ -2,30 +2,29 @@
 
 
 # Analytics csv
-$global:ASN_ANALYTICS = @("Name,CountryCode,Description,ASN`n")
+$global:ASN_ANALYTICS = @("Name,CountryCode,Description,ASN")
 
 function Get-ASNInfo {
     param (
         $OrganizationName = "microsoft"
     )
     $url = "https://api.bgpview.io/search?query_term=$OrganizationName"
-    $response = Invoke-RestMethod -Uri $url -Method Get
+    #$response = Invoke-RestMethod -Uri $url -Method Get
+    $response.status = "ok"
 
     if ($response.status -eq "ok") {
         # $asnInfo = $response | ConvertFrom-Json 
         $asnInfo = Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
         $asns = $AsnInfo.data.asns
         $asnValues = @()
-        $data = @("Name,CountryCode,Description,ASN`n")
+        $data = @("Name,CountryCode,Description,ASN")
         foreach ($asn in $asns) {
-            #echo "asnInfo log: $asn.asn"
-            #$test = $asn.asn | Select-Object asn
-            #echo $test
-            $asnValues += $asn.asn
-            $data += "$($asn.name),$($asn.country_code),$($asn.description),$($asn.asn)`n"
-            #echo $ASN_ANALYTICS
+            $asnValues += $asn | Select-Object asn | Select-Object -ExpandProperty asn
+            # Input sanitization for extra commas
+            $data += "$($asn.name -replace ","),$($asn.country_code -replace ","),$($asn.description -replace ","),$($asn | Select-Object asn | Select-Object -ExpandProperty asn)"
         }
-        Set-Variable -Name $ASN_ANALYTICS -Value $data -Scope Global
+        $global:ASN_ANALYTICS = $data
+
     }
     else {
         Write-Host "Error: $($response.status) - $($response.status_message)"
@@ -39,7 +38,8 @@ function Get-ASNPrefixes {
         $ASN
     )
     $url = "https://stat.ripe.net/data/announced-prefixes/data.json?resource=$ASN"
-    $response = Invoke-RestMethod -Uri $url -Method Get
+    #$response = Invoke-RestMethod -Uri $url -Method Get
+    $response.status = "ok"
 
     if ($response.status -eq "ok") {
         # TESTING : $asnPrefixInfo = $response | ConvertFrom-Json
@@ -67,18 +67,19 @@ function Write-ASNAnalytics {
     )
     $asn_analytics = $global:ASN_ANALYTICS
 
-    $UniqueCountryCodesCount = ($asn_analytics | Select-Object CountryCode | Get-Unique | Measure-Object).Count
-    $UniqueASN = ($asn_analytics | Select-Object ASN | Sort-Object | Get-Unique | Select-Object -ExpandProperty ASN)
-    $UniqueASNCount = ($asn_analytics | Select-Object ASN | Get-Unique | Measure-Object).Count
-    #$UniqueNames = ($asn_analytics | Select-Object Name | Sort-Object | Get-Unique | Select-Object -ExpandProperty Name)
-    $UniqueNames = ($asn_analytics | Select-Object Name | Get-Unique | Select-Object -ExpandProperty Name)
-    $UniqueNamesCount = ($asn_analytics | Select-Object Name | Get-Unique | Measure-Object).Count
-    #$UniqueDescriptions = ($asn_analytics | Select-Object Description | Sort-Object | Get-Unique | Select-Object -ExpandProperty Description)
-    $UniqueDescriptions = ($asn_analytics | Select-Object Description | Get-Unique | Select-Object -ExpandProperty Description)
-    $UniqueDescriptionsCount = ($asn_analytics | Select-Object Description | Get-Unique | Measure-Object).Count
+    #WORKING TILL HERE
 
-    $UniquePrefixes = ($prefix_analytics | Sort-Object | Get-Unique | Select-Object -ExpandProperty Name)
-    $UniquePrefixCount = ($prefix_analytics | Get-Unique | Measure-Object).Count
+    #$UniqueCountryCodesCount = ($global:asn_analytics | Select-Object CountryCode | Get-Unique | Measure-Object).Count
+    $UniqueCountryCodesCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
+    $UniqueASN = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object {[int]$_}) -join ','
+    $UniqueASNCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object -Unique).count
+    $UniqueNames = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object) -join ','
+    $UniqueNamesCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object -Unique).count
+    $UniqueDescriptions = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
+    $UniqueDescriptionsCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
+
+    $UniquePrefixes = ($asn_prefixes | Get-Unique )
+    $UniquePrefixCount = ($asn_prefixes | Get-Unique | Measure-Object).Count
 
     Write-Host "UniqueCountryCodesCount: $UniqueCountryCodesCount"
     Write-Host "UniqueASN: $UniqueASN"
@@ -88,7 +89,7 @@ function Write-ASNAnalytics {
     Write-Host "UniqueDescriptions: $UniqueDescriptions"
     Write-Host "UniqueDescriptionsCount: $UniqueDescriptionsCount"
 
-    Write-Host "UniquePrefixes: $UniquePrefixes"
+    #Write-Host "UniquePrefixes: $UniquePrefixes"
     Write-Host "UniquePrefixCount: $UniquePrefixCount"
 
     $output = "
@@ -98,7 +99,7 @@ UniqueASNCount: $UniqueASNCount`n
 UniqueNamesCount: $UniqueNamesCount`n
 UniqueDescriptions: $UniqueDescriptions`n
 UniqueDescriptionsCount: $UniqueDescriptionsCount`n
-UniquePrefixes: $UniquePrefixes`n
+UniquePrefixes: UniquePrefixes`n
 UniquePrefixCount $UniquePrefixCount`n
 "
     Write-Host "Exporting to: $PWD\asn_analytics.txt"
@@ -110,16 +111,16 @@ UniquePrefixCount $UniquePrefixCount`n
 # Get all asn for a given org name
 $ASNumbers = Get-ASNInfo -OrganizationName "microsoft"
 
+
 # Get all prefixes assoiciated with each AS number
 $ASNPrefixes = @()
-foreach ($ASNumber in $ASNumbers) {
+foreach ($ASNumber in ($ASNumbers | Sort-Object)) {
     echo "main log: $ASNumber"
     $ASNPrefixes += Get-ASNPrefixes -ASN $ASNumber
 }
 
 # Write analytics file to working dir
-#Write-ASNAnalytics -asn_analytics $ASN_ANALYTICS -asn_prefixes $ASNPrefixes
 Write-ASNAnalytics -asn_prefixes $ASNPrefixes
 
 # Write all prefixes to file
-$ASNPrefixes | Out-File -FilePath "asn_ip_ranges.txt" -Encoding utf8 -Append
+$ASNPrefixes | Out-File -FilePath "asn_ip_ranges.txt" -Encoding utf8 -Force
