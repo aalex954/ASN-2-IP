@@ -1,18 +1,1 @@
 ﻿
-UniqueCountryCodesCount: 4
-
-UniqueASN: 3598,5761,6182,6584,8068,8069,8070,8071,8075,12076,13399,14271,14719,20046,23468,35106,45139,52985,395496,395524,395851,396463,398575,398656,400572
-
-UniqueASNCount: 25
-
-UniqueNamesCount: 20
-
-UniqueDescriptions: Microsoft Corp,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation AS8075,Microsoft do Brasil Imp. e Com. Software e Video G,Proconex Inc.
-
-UniqueDescriptionsCount: 5
-
-UniquePrefixes: UniquePrefixes
-
-UniquePrefixCount 5050
-
-

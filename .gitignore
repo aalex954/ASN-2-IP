@@ -3,6 +3,8 @@ asn_ip_ranges.txt
 Check_MSFT_EOP_IPs.xlsm
 msft_asns_bgpview.json
 ripe_prefix.json
+asn_analytics.txt
+asn_ip_ranges.txt
 
 bin/
 obj/
