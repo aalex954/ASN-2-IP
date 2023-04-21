@@ -101,11 +101,11 @@ function Write-ASNAnalytics {
     $UniqueNamesCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object -Unique).count
     $UniqueDescriptions = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
     $UniqueDescriptionsCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
-
     $UniquePrefixCount = ($ASN_PREFIXES | Get-Unique | Measure-Object).Count
+    
     Write-Host ([string]::new('-' * ($host.UI.RawUI.BufferSize.Width - 1)))
-    Write-Host "UniqueCountryCodesCount: $UniqueCountryCodesCount"
-
+    Write-Host "UniqueCountryCodesCount: " -NoNewline -ForegroundColor Yellow
+    Write-Host $UniqueCountryCodesCount
     Write-Host "UniqueASN: " -NoNewline -ForegroundColor Yellow
     Write-Host $UniqueASN
     Write-Host "UniqueASNCount: " -NoNewline -ForegroundColor Yellow
