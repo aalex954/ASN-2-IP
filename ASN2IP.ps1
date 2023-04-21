@@ -15,11 +15,17 @@ function Global:Get-ASNInfo {
         $ORGANIZATION_NAME
     )
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
-    $response = Invoke-RestMethod -Uri $url -Method Get
+    try {
+        $response = (Invoke-WebRequest -Uri $url -Method Get)
+        $responseContent = ($response).Content
+    } catch {
+        Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
+        return
+    }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
 
-    if ($response.status -eq "ok") {
-        $asnInfo = $response
+    if ($response.StatusCode -eq "200") {
+        $asnInfo = ConvertFrom-Json $responseContent
         #$asnInfo = Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
         $asns = $AsnInfo.data.asns
         $asnValues = @()
@@ -39,9 +45,10 @@ function Global:Get-ASNInfo {
         Write-Host $asnsCountFormatted -NoNewline -ForegroundColor Green
         Write-Host ")" -ForegroundColor Yellow
     }
-    else { Write-Host "Error: $($response.status) - $($response.status_message)" -ForegroundColor Red }
+    else { Write-Host "Function Error: $($response.status) - $($response.status_message)" -ForegroundColor Red; return }
     return $asnValues | Sort-Object
 }
+
 
 <#
 .SYNOPSIS
@@ -55,19 +62,27 @@ function Global:Get-ASNPrefixes {
         $ASN
     )
     $url = "https://stat.ripe.net/data/announced-prefixes/data.json?resource=$ASN"
-    $response = Invoke-RestMethod -Uri $url -Method Get
+    try {
+        $response = Invoke-WebRequest -Uri $url -Method Get | Select-Object -ExpandProperty Content
+    } catch {
+        Write-Error "Error: Failed to get response from $url"
+        throw
+    }
 
     Write-Host "Getting AS Prefixes for...." -NoNewline -ForegroundColor Yellow
 
-    if ($response.status -eq "ok") {
-        $asnPrefixInfo = $response
-        #$asnPrefixInfo = Get-Content .\ripe_prefix.json -Raw | ConvertFrom-Json
+    $asnPrefixInfo = $response | ConvertFrom-Json
+
+    if ($asnPrefixInfo.status -eq "ok") {
         $prefixes = $asnPrefixInfo.data.prefixes
         $prefixValues = @()
 
         foreach ($prefix in $prefixes) { $prefixValues += $prefix.prefix}
     }
-    else { Write-Host "Error: $($response.status) - $($response.status_message)" -ForegroundColor Red }
+    else { 
+        Write-Host "Error: $($asnPrefixInfo.status) - $($asnPrefixInfo.status_message)" -ForegroundColor Red 
+        throw "Failed to get prefixes for ASN $ASN"
+    }
 
 
     $y = if ($null -eq $prefixValues[-1]) {0} else { $prefixValues[-1].ToString().Length }
@@ -102,7 +117,7 @@ function Write-ASNAnalytics {
     $UniqueDescriptions = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
     $UniqueDescriptionsCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
     $UniquePrefixCount = ($ASN_PREFIXES | Get-Unique | Measure-Object).Count
-    
+
     Write-Host ([string]::new('-' * ($host.UI.RawUI.BufferSize.Width - 1)))
     Write-Host "UniqueCountryCodesCount: " -NoNewline -ForegroundColor Yellow
     Write-Host $UniqueCountryCodesCount
@@ -133,9 +148,9 @@ UniqueDescriptionsCount: $UniqueDescriptionsCount`n
 UniquePrefixes: UniquePrefixes`n
 UniquePrefixCount $UniquePrefixCount`n
 "
-    Write-Host "Exporting to: $PWD\asn_analytics.txt" -ForegroundColor Yellow
+    Write-Host "Exporting to: $PWD\asn_analytics.txt" -ForegroundColor Green
 
-    $output | Out-File -FilePath "$PWD\asn_analytics.txt" -Encoding utf8 -Force
+    $output | Set-Content "$PWD\asn_analytics.txt"
 }
 
 <#
@@ -147,22 +162,36 @@ function Run {
         [Parameter(Mandatory = $false)]
         $organizationName = "microsoft"
     )
-    $ASNumbers = Get-ASNInfo -ORGANIZATION_NAME $organizationName
-    $ASNPrefixes = @()
-    $ASNPrefixes = $ASNumbers | Sort-Object | ForEach-Object { Get-ASNPrefixes -asn $_ } 
+    try {
+        $ASNumbers = Get-ASNInfo -ORGANIZATION_NAME $organizationName
+        $ASNPrefixes = @()
+        $ASNumbers | Sort-Object | ForEach-Object { 
+            try {
+                $ASNPrefixes += Get-ASNPrefixes -asn $_ 
+            }
+            catch {
+                Write-Host "Failed to get prefixes for ASN $_. Error message: $($_.Exception.Message)" -ForegroundColor Red
+                exit 1
+            }
+        }
+        $DeduplicatedASNPrefixes = $ASNPrefixes | Sort-Object -Unique
+        if ($ASNPrefixes.Count -ne $DeduplicatedASNPrefixes.Count) {
+            Write-Host "WARNING: $($ASNPrefixes.Count - $DeduplicatedASNPrefixes.Count) duplicate prefixes detected" -ForegroundColor Red
+            Write-Host "This can occur due to various reasons, such as misconfiguration, lack of coordination, or even malicious intent (e.g., BGP hijacking)" -ForegroundColor Red
+        }
 
-    $DeduplicatedASNPrefixes = $ASNPrefixes | Sort-Object -Unique
-    if ($ASNPrefixes.Count -ne $DeduplicatedASNPrefixes.Count) {
-        Write-Host "WARNING: $($ASNPrefixes.Count - $DeduplicatedASNPrefixes.Count) duplicate prefixes detected" -ForegroundColor Red
-        Write-Host "This can occur due to various reasons, such as misconfiguration, lack of coordination, or even malicious intent (e.g., BGP hijacking)" -ForegroundColor Red
+        Write-Host "`nExporting deduplicated ASN Prefixes to: " -ForegroundColor Green
+        Write-Host "$(Get-Location) asn_ip_ranges.txt" -ForegroundColor Green
+        $ASNPrefixes | Sort-Object -Unique | Set-Content  "asn_ip_ranges.txt"
+
+        Write-Host "Output Analytics...." -ForegroundColor Yellow
+        Write-ASNAnalytics -ASN_PREFIXES $ASNPrefixes
     }
-
-    Write-Host "`nExporting deduplicated ASN Prefixes to: " -NoNewline -ForegroundColor Green
-    Write-Host "$(Get-Location) asn_ip_ranges.txt" -ForegroundColor Green
-    $ASNPrefixes | Sort-Object -Unique | Out-File -FilePath "asn_ip_ranges.txt" -Encoding utf8 -Force
-
-    Write-Host "Output Analytics...." -ForegroundColor Yellow
-    Write-ASNAnalytics -asn_prefixes $ASNPrefixes
+    catch {
+        Write-Host "Failed to run the script. Error message: $($_.Exception.Message)" -ForegroundColor Red
+        return
+    }
 }
+
 # -------------------------------------------------------------------------------------------------------
 Run -organizationName $ORGANIZATION_NAME
