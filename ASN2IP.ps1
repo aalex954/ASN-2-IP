@@ -8,7 +8,7 @@ It queries the BGPView API to get the AS Numbers associated with the specified o
 Takes an optional param of {url} representing the organization name in a ARIN WHOIS record.
 If no {url} param is provided, the organization name defaults to "microsoft".
 #>
-function Get-ASNInfo {
+function Global:Get-ASNInfo {
     param (
         [switch]$Passthru,
         [Parameter(Position = 0, Mandatory = $true)]
@@ -49,7 +49,7 @@ Returns a list of strings representing all IP prefixes of a provided AS number.
 It queries the RIPE NCC API to get the announced prefixes for the given AS number.
 Takes an mandatory param of {asn} representing an Autonomous System (AS) number.
 #>
-function Get-ASNPrefixes {
+function Global:Get-ASNPrefixes {
     param (
         [Parameter(Position = 0, Mandatory = $true)]
         $ASN
@@ -90,12 +90,9 @@ Takes an mandatory param of {asn_prefixes} representing IP prefixes of one or ma
 #>
 function Write-ASNAnalytics {
     param (
-        # [Parameter(Mandatory = $true)]
-        # $asn_analytics,
         [Parameter(Mandatory = $true)]
         $ASN_PREFIXES
     )
-    $asn_analytics = $global:ASN_ANALYTICS
 
     $UniqueCountryCodesCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
     $UniqueASN = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
