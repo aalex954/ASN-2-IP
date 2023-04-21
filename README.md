@@ -90,7 +90,7 @@ Write-ASNAnalytics
 The main function that runs with default values or a provided organization name. It calls the other functions to retrieve AS Numbers, get the associated IP prefixes, and write the analytics information to the console and text files.
 
 ```powershell
-Run
+Run -organizationName $ORGANIZATION_NAME
 ```
 
 ![ASN-2-IP_1](https://user-images.githubusercontent.com/6628565/233575960-5d92e9cb-8152-4056-9be1-99fedc6e5626.jpg)
