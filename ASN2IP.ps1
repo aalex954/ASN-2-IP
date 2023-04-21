@@ -12,17 +12,18 @@ function Global:Get-ASNInfo {
     param (
         [switch]$Passthru,
         [Parameter(Position = 0, Mandatory = $true)]
-        $ORGANIZATION_NAME
+        $ORGANIZATION_NAME = $global:ORGANIZATION_NAME
     )
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
     try {
-        $response = (Invoke-WebRequest -Uri $url -Method Get)
-        $responseContent = ($response).Content
+        $response = Invoke-WebRequest -Uri $url -Method Get
     } catch {
         Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
         return
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
+    
+    $responseContent = ($response).Content
 
     if ($response.StatusCode -eq "200") {
         $asnInfo = ConvertFrom-Json $responseContent
@@ -189,8 +190,6 @@ function Run {
     }
     catch {
         Write-Host "Failed to run the script. Error message: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host $global:asn_analytics 
-        Write-Host $ASN_PREFIXES
         return
     }
 }
