@@ -168,4 +168,4 @@ function Run {
     Write-ASNAnalytics -asn_prefixes $ASNPrefixes
 }
 # -------------------------------------------------------------------------------------------------------
-Run -organizationName "microsoft"
+Run -organizationName $ORGANIZATION_NAME
