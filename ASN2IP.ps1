@@ -15,17 +15,17 @@ function Global:Get-ASNInfo {
         $ORGANIZATION_NAME
     )
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
-    $rCode = $response.status
     try {
-        $response = (Invoke-WebRequest -Uri $url -Method Get).Content
+        $response = (Invoke-WebRequest -Uri $url -Method Get)
+        $responseContent = ($response).Content
     } catch {
-        Write-Host "Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
+        Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
         return
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
-
-    if ($rCode -eq "ok") {
-        $asnInfo = $response | ConvertFrom-Json
+    
+    if ($response.StatusCode -eq "200") {
+        $asnInfo = ConvertFrom-Json $responseContent
         #$asnInfo = Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
         $asns = $AsnInfo.data.asns
         $asnValues = @()
@@ -45,7 +45,7 @@ function Global:Get-ASNInfo {
         Write-Host $asnsCountFormatted -NoNewline -ForegroundColor Green
         Write-Host ")" -ForegroundColor Yellow
     }
-    else { Write-Host "Error: $($response.status) - $($response.status_message)" -ForegroundColor Red; return }
+    else { Write-Host "Function Error: $($response.status) - $($response.status_message)" -ForegroundColor Red; return }
     return $asnValues | Sort-Object
 }
 
