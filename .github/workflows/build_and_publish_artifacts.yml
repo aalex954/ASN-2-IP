@@ -26,9 +26,9 @@ jobs:
       - uses: actions/checkout@v3
 
       # Runs ASN2IP.ps1 with PS
-      - name: Run get_msft_ips Script
+      - name: Run ASN2IP Script
         shell: pwsh
-        run: ./ASN2IP.ps1
+        run: ./ASN2IP.ps1 -ORGANIZATION_NAME "microsoft"
         
       - name: Create Release
         id: create_release
