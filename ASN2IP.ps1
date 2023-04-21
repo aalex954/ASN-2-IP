@@ -14,6 +14,7 @@ function Global:Get-ASNInfo {
         [Parameter(Position = 0, Mandatory = $true)]
         $ORGANIZATION_NAME = $global:ORGANIZATION_NAME
     )
+    $env:ASN_ANALYTICS = @("Name,CountryCode,Description,ASN`n")
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
     try {
         $response = Invoke-WebRequest -Uri $url -Method Get
@@ -33,10 +34,11 @@ function Global:Get-ASNInfo {
         $data = @("Name,CountryCode,Description,ASN")
         foreach ($asn in $asns) {
             $asnValues += $asn | Select-Object asn | Select-Object -ExpandProperty asn
-            $data += "$($asn.name -replace ","),$($asn.country_code -replace ","),$($asn.description -replace ","),$($asn | Select-Object asn | Select-Object -ExpandProperty asn)"
+            $data += "$($asn.name -replace ","),$($asn.country_code -replace ","),$($asn.description -replace ","),$($asn | Select-Object asn | Select-Object -ExpandProperty asn)`n"
         }
-        Set-Variable -Name ASN_ANALYTICS -Value @("Name,CountryCode,Description,ASN") -Scope global
-        Set-Variable -Name ASN_ANALYTICS -Value $data -Scope global
+        #Set-Variable -Name ASN_ANALYTICS -Value @("Name,CountryCode,Description,ASN") -Scope global
+        #Set-Variable -Name ASN_ANALYTICS -Value $data -Scope global
+        $env:ASN_ANALYTICS = $data
 
         $okFormatted = "{0,-8}" -f "Ok"
         $asnsCountFormatted = "{0,4}" -f $asns.Count
@@ -110,13 +112,13 @@ function Write-ASNAnalytics {
         $ASN_PREFIXES
     )
 
-    $UniqueCountryCodesCount = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
-    $UniqueASN = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
-    $UniqueASNCount = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object -Unique).count
-    $UniqueNames = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object) -join ','
-    $UniqueNamesCount = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object -Unique).count
-    $UniqueDescriptions = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
-    $UniqueDescriptionsCount = ($global:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
+    $UniqueCountryCodesCount = ($env:ASN_ANALYTICS| ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
+    $UniqueASN = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
+    $UniqueASNCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object -Unique).count
+    $UniqueNames = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object) -join ','
+    $UniqueNamesCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object -Unique).count
+    $UniqueDescriptions = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
+    $UniqueDescriptionsCount = ($env:ASN_ANALYTICS| ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
     $UniquePrefixCount = ($ASN_PREFIXES | Get-Unique | Measure-Object).Count
 
     Write-Host ([string]::new('-' * ($host.UI.RawUI.BufferSize.Width - 1)))
