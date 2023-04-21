@@ -14,7 +14,7 @@ function Global:Get-ASNInfo {
         [Parameter(Position = 0, Mandatory = $true)]
         $ORGANIZATION_NAME = $global:ORGANIZATION_NAME
     )
-    $env:ASN_ANALYTICS = @("Name,CountryCode,Description,ASN`n")
+
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
     try {
         $response = Invoke-WebRequest -Uri $url -Method Get
@@ -31,7 +31,7 @@ function Global:Get-ASNInfo {
         #$asnInfo = Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
         $asns = $AsnInfo.data.asns
         $asnValues = @()
-        $data = @("Name,CountryCode,Description,ASN")
+        $data = @("Name,CountryCode,Description,ASN`n")
         foreach ($asn in $asns) {
             $asnValues += $asn | Select-Object asn | Select-Object -ExpandProperty asn
             $data += "$($asn.name -replace ","),$($asn.country_code -replace ","),$($asn.description -replace ","),$($asn | Select-Object asn | Select-Object -ExpandProperty asn)`n"
@@ -111,8 +111,9 @@ function Write-ASNAnalytics {
         [Parameter(Mandatory = $true)]
         $ASN_PREFIXES
     )
+    Write-Host $env:ASN_ANALYTICS
 
-    $UniqueCountryCodesCount = ($env:ASN_ANALYTICS| ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
+    $UniqueCountryCodesCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
     $UniqueASN = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
     $UniqueASNCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object -Unique).count
     $UniqueNames = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object) -join ','
