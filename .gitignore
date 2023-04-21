@@ -5,6 +5,8 @@ msft_asns_bgpview.json
 ripe_prefix.json
 asn_analytics.txt
 asn_ip_ranges.txt
+asn_ip_ranges_dedupe.txt
+
 
 bin/
 obj/
