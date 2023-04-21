@@ -111,7 +111,7 @@ function Write-ASNAnalytics {
         [Parameter(Mandatory = $true)]
         $ASN_PREFIXES
     )
-    Write-Host $env:ASN_ANALYTICS
+    Write-Host $Global:env:ASN_ANALYTICS
 
     $UniqueCountryCodesCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
     $UniqueASN = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
