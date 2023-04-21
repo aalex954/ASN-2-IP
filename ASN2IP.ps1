@@ -185,7 +185,7 @@ function Run {
         $ASNPrefixes | Sort-Object -Unique | Set-Content  "asn_ip_ranges.txt"
 
         Write-Host "Output Analytics...." -ForegroundColor Yellow
-        Write-ASNAnalytics -asn_prefixes $ASNPrefixes
+        Write-ASNAnalytics -ASN_PREFIXES $ASNPrefixes
     }
     catch {
         Write-Host "Failed to run the script. Error message: $($_.Exception.Message)" -ForegroundColor Red
