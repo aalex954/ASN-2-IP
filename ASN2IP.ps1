@@ -109,9 +109,6 @@ function Write-ASNAnalytics {
         $ASN_PREFIXES
     )
 
-    Write-Host $global:asn_analytics 
-    Write-Host $ASN_PREFIXES
-
     $UniqueCountryCodesCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object CountryCode | Select-Object -ExpandProperty CountryCode | Sort-Object -Unique).count
     $UniqueASN = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object { [int]$_ }) -join ','
     $UniqueASNCount = ($global:asn_analytics | ConvertFrom-Csv -Delimiter ',' | Select-Object ASN | Select-Object -ExpandProperty ASN | Sort-Object -Unique).count
@@ -192,6 +189,8 @@ function Run {
     }
     catch {
         Write-Host "Failed to run the script. Error message: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host $global:asn_analytics 
+        Write-Host $ASN_PREFIXES
         return
     }
 }
