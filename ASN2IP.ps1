@@ -23,7 +23,7 @@ function Global:Get-ASNInfo {
         return
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
-    
+
     if ($response.StatusCode -eq "200") {
         $asnInfo = ConvertFrom-Json $responseContent
         #$asnInfo = Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
@@ -189,7 +189,7 @@ function Run {
     }
     catch {
         Write-Host "Failed to run the script. Error message: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        return
     }
 }
 
