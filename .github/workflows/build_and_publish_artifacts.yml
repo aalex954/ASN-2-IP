@@ -21,13 +21,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+         
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs ASN2IP.ps1 with PS
       - name: Run ASN2IP Script
-        shell: pwsh
-        run: ./ASN2IP.ps1
+        run: |
+         pwsh -File ./ASN2IP.ps1 -organizationName "microsoft"
         
       - name: Create Release
         id: create_release
