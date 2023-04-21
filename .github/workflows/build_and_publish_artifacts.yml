@@ -24,11 +24,6 @@ jobs:
          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      
-      - name: Set up PowerShell
-        uses: actions/setup-powershell@v1
-        with:
-          pwsh-version: '7.1'
 
       - name: Run ASN2IP Script
         run: |
