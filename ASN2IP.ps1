@@ -227,6 +227,7 @@ try {
 
     $headers = @{
         "Content-Type"  = "application/json"
+        "User-Agent" = "mozilla/5.0 (windows nt; windows nt 10.0; en-us) windowspowershell/5.1.19041.2673"
     }
     # $headers = @{
     #     "Content-Type"  = "application/json"
