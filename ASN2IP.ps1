@@ -17,12 +17,15 @@ function Global:Get-ASNInfo {
 
     $url = "https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
     try {
-        $response = Invoke-WebRequest -Uri $url -Method Get
-    } catch {
+        $response = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop
+    } 
+    catch [System.Net.Http.HttpRequestException, System.Net.WebException] {
+        "Error accessing https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
+    } 
+    catch {
         Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
         Write-Host "Status: ($response.StatusCode)"
         Write-Host "Response: ($response.Content)"
-
         return
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
