@@ -21,7 +21,7 @@ function Global:Get-ASNInfo {
         #$response = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop
         $response = Invoke-WebRequest -Uri $debug_url -Method Get -ErrorAction Stop
     } 
-    catch [System.Net.Http.HttpRequestException, System.Net.WebException] {
+    catch [System.Net.Http.HttpRequestException] {
         "Error accessing https://api.bgpview.io/search?query_term=$ORGANIZATION_NAME"
     } 
     catch {
