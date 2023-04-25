@@ -238,7 +238,7 @@ try {
     #     "upgrade-insecure-requests" = "1"
     # }
 
-    $response = Invoke-WebRequest -Uri $url -Method Get -Headers $headers  -ErrorAction Stop
+    $response = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop -HttpVersion 20
 } 
 catch {
     Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
