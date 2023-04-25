@@ -20,6 +20,8 @@ function Global:Get-ASNInfo {
         $response = Invoke-WebRequest -Uri $url -Method Get
     } catch {
         Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
+        Write-Host "Status: $response.StatusCode"
+        Write-Host "Response: $(($response).Content)"
         return
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
