@@ -27,6 +27,7 @@ jobs:
 
       - name: Run ASN2IP Script
         run: |
+         Set-PSDebug -Trace 2 |
          pwsh -File ./ASN2IP.ps1 -organizationName "microsoft"
         
       - name: Create Release
