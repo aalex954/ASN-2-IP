@@ -2,7 +2,7 @@
 
 ## Description
 
-This PowerShell script retrieves all the Autonomous System (AS) Numbers associated with an organization and then gets a deduplicated list of IPv4 and IPv6 subnets controlled by each AS number.
+This PowerShell script retrieves all the Autonomous System (AS) Numbers associated with an organization and then gets a deduplicated list of IPv4 and IPv6 subnets controlled by each AS number. Written in PWSH core, this script is cross compatable and works on both Linux and Windows machines provided they have PWSH core installed.
 
 When the script is executed, it fetches AS Numbers associated with the specified organization (defaults to "microsoft"), retrieves the IP prefixes for each AS Number, deduplicates the IP prefixes, and writes the deduplicated IP prefixes to a file asn_ip_ranges.txt. It also generates analytics information, such as unique country codes, unique AS Numbers, unique names, unique descriptions, and unique prefix counts, and writes this information to the console and a file asn_analytics.txt.
 
