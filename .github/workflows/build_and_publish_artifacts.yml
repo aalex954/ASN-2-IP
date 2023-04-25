@@ -21,15 +21,18 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    
+      - name: Check PS Version
+        run: |
+         pwsh -version
          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
       - name: Run ASN2IP Script
         run: |
-         pwsh -version |
          Set-PSDebug -Trace 2 |
-         pwsh -Command "./ASN2IP.ps1 -ExecutionPolicy bypass -ORGANIZATION_NAME "microsoft""
+         pwsh ASN2IP.ps1
         
       - name: Create Release
         id: create_release
