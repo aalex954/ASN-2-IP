@@ -17,17 +17,24 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+      
+      - name: wget
+        uses: wei/wget@v1
+        with:
+         args: -O msft_asns_bgpview.json https://api.bgpview.io/search?query_term=microsoft
       - name: Run ASN2IP Script
+        shell: pwsh
         run: |
-         pwsh ASN2IP.ps1 "microsoft"
+         pwsh . .\ASN2IP.ps1 |
+         Get-ASNPrefixes -ASN Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
+         
         
       - name: Create Release
         id: create_release
