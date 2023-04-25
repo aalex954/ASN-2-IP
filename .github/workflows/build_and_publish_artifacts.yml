@@ -24,10 +24,17 @@ jobs:
          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+      
+      - name: wget
+        uses: wei/wget@v1
+        with:
+         args: -O msft_asns_bgpview.json https://api.bgpview.io/search?query_term=microsoft
       - name: Run ASN2IP Script
+        shell: pwsh
         run: |
-         pwsh ASN2IP.ps1 "microsoft"
+         pwsh . .\ASN2IP.ps1 |
+         Get-ASNPrefixes -ASN Get-Content .\msft_asns_bgpview.json -Raw | ConvertFrom-Json
+         
         
       - name: Create Release
         id: create_release
