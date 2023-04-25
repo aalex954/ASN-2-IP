@@ -27,7 +27,9 @@ jobs:
 
       - name: Run ASN2IP Script
         run: |
-         pwsh -File ./ASN2IP.ps1 -organizationName "microsoft"
+         pwsh -version |
+         Set-PSDebug -Trace 2 |
+         pwsh -Command "./ASN2IP.ps1 -ExecutionPolicy bypass -ORGANIZATION_NAME "microsoft""
         
       - name: Create Release
         id: create_release
