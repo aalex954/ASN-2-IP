@@ -227,12 +227,15 @@ try {
 
     $headers = @{
         "Content-Type"  = "application/json"
-        "User-Agent" = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
-        "sec-ch-ua" = '"microsoft edge";v="112", "not:a-brand";v="99"'
-        "sec-ch-ua-mobile" = "?0"
-        "sec-ch-ua-platform" = "windows"
-        "upgrade-insecure-requests" = "1"
     }
+    # $headers = @{
+    #     "Content-Type"  = "application/json"
+    #     "User-Agent" = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
+    #     "sec-ch-ua" = '"microsoft edge";v="112", "not:a-brand";v="99"'
+    #     "sec-ch-ua-mobile" = "?0"
+    #     "sec-ch-ua-platform" = "windows"
+    #     "upgrade-insecure-requests" = "1"
+    # }
 
     $response = Invoke-WebRequest -Uri $url -Method Get -Headers $headers  -ErrorAction Stop
 } 
