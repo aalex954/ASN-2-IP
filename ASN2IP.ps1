@@ -28,7 +28,7 @@ function Global:Get-ASNInfo {
         Write-Host "Request Error: Failed to retrieve information for $ORGANIZATION_NAME" -ForegroundColor Red
         "Status: " + "$response.StatusCode"
         "Response: " + "$response.Content"
-        return
+        throw
     }
     Write-Host "Getting AS Numbers........." -NoNewline -ForegroundColor Yellow
     
