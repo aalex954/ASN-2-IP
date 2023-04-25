@@ -27,7 +27,7 @@ jobs:
 
       - name: Run ASN2IP Script
         run: |
-         pwsh ASN2IP.ps1 -ORGANIZATION_NAME "microsoft"
+         ASN2IP.ps1 "microsoft"
         
       - name: Create Release
         id: create_release
