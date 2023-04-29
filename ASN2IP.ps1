@@ -1,5 +1,5 @@
 # Finds all AS numbers associated with an organization name and returns a deduplicated list of IPv4 and IPv6 subnets owned controlled by each AS number in a text file called asn_ip_ranges.txt
-param([string]$ORGANIZATION_NAME="microsoft") 
+param([string]$ORGANIZATION_NAME = "microsoft") 
 
 $env:ASN_ANALYTICS = $null
 
@@ -21,11 +21,11 @@ function Global:Get-ASNInfo {
     try {
 
         $headers = @{
-            "Content-Type"  = "application/json"
-            "User-Agent" = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
-            "sec-ch-ua" = '"microsoft edge";v="112", "not:a-brand";v="99"'
-            "sec-ch-ua-mobile" = "?0"
-            "sec-ch-ua-platform" = "windows"
+            "Content-Type"              = "application/json"
+            "User-Agent"                = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
+            "sec-ch-ua"                 = '"microsoft edge";v="112", "not:a-brand";v="99"'
+            "sec-ch-ua-mobile"          = "?0"
+            "sec-ch-ua-platform"        = "windows"
             "upgrade-insecure-requests" = "1"
         }
 
@@ -74,22 +74,24 @@ Takes an mandatory param of {asn} representing an Autonomous System (AS) number.
 function Global:Get-ASNPrefixes {
     param (
         [Parameter(Position = 0, Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         $ASN
     )
     $url = "https://stat.ripe.net/data/announced-prefixes/data.json?resource=$ASN"
 
     $headers = @{
-        "Content-Type"  = "application/json"
-        "User-Agent" = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
-        "sec-ch-ua" = '"microsoft edge";v="112", "not:a-brand";v="99"'
-        "sec-ch-ua-mobile" = "?0"
-        "sec-ch-ua-platform" = "windows"
+        "Content-Type"              = "application/json"
+        "User-Agent"                = "mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36 edg/112.0.1722.48"
+        "sec-ch-ua"                 = '"microsoft edge";v="112", "not:a-brand";v="99"'
+        "sec-ch-ua-mobile"          = "?0"
+        "sec-ch-ua-platform"        = "windows"
         "upgrade-insecure-requests" = "1"
     }
 
     try {
         $response = Invoke-WebRequest -Uri $url -Method Get -Headers $headers | Select-Object -ExpandProperty Content
-    } catch {
+    }
+    catch {
         Write-Error "Error: Failed to get response from $url"
         throw
     }
@@ -102,16 +104,14 @@ function Global:Get-ASNPrefixes {
         $prefixes = $asnPrefixInfo.data.prefixes
         $prefixValues = @()
 
-        foreach ($prefix in $prefixes) { $prefixValues += $prefix.prefix}
+        foreach ($prefix in $prefixes) { $prefixValues += $prefix.prefix }
     }
     else { 
         Write-Host "Error: $($asnPrefixInfo.status) - $($asnPrefixInfo.status_message)" -ForegroundColor Red 
         throw "Failed to get prefixes for ASN $ASN"
     }
-
-
-    $y = if ($null -eq $prefixValues[-1]) {0} else { $prefixValues[-1].ToString().Length }
-    $z = if ($prefixValues[-1] -eq $null) { '0' } else { $prefixValues[-1].ToString().Length }
+    # $y = if ($null -eq $prefixValues[-1]) {0} else { $prefixValues[-1].ToString().Length }
+    # $z = if ($prefixValues[-1] -eq $null) { '0' } else { $prefixValues[-1].ToString().Length }
     
     $ASNFormatted = "{0,-8}" -f $ASN
     $prefixCountFormatted = "{0,4}" -f $prefixValues.Count
@@ -131,6 +131,7 @@ Takes an mandatory param of {asn_prefixes} representing IP prefixes of one or ma
 function Write-ASNAnalytics {
     param (
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         $ASN_PREFIXES
     )
     Write-Host $Global:env:ASN_ANALYTICS
@@ -141,7 +142,7 @@ function Write-ASNAnalytics {
     $UniqueNames = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object) -join ','
     $UniqueNamesCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Name | Select-Object -ExpandProperty Name | Sort-Object -Unique).count
     $UniqueDescriptions = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object) -join ','
-    $UniqueDescriptionsCount = ($env:ASN_ANALYTICS| ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
+    $UniqueDescriptionsCount = ($env:ASN_ANALYTICS | ConvertFrom-Csv -Delimiter ',' | Select-Object Description | Select-Object -ExpandProperty Description | Sort-Object -Unique).count
     $UniquePrefixCount = ($ASN_PREFIXES | Get-Unique | Measure-Object).Count
 
     Write-Host ([string]::new('-' * ($host.UI.RawUI.BufferSize.Width - 1)))
