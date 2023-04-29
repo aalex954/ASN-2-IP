@@ -79,6 +79,7 @@ Get-ASNPrefixes -ASN
 
 Writes analytics to the console and as a text file named asn_analytics.txt.
 Takes an mandatory param of {asn_prefixes} representing IP prefixes of one or many Autonomous System (AS) numbers.
+This function also references a global variable called ```$env:ASN_ANALYTICS``` and as such cannot be called externally without also having first run the ```Get-ASNInfo``` function which will set the global variable.
 
 ```powershell
 Write-ASNAnalytics
