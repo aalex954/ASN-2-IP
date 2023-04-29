@@ -48,7 +48,7 @@ powershell.exe .\ASN2IP.ps1 -ORGANIZATION_NAME "microsoft"
 . .\ASN2IP.ps1
 $ASNumbers = Get-ASNInfo -ORGANIZATION_NAME $OrganizationName
 $ASNPrefixes = $ASNumbers | Sort-Object | ForEach-Object { Get-ASNPrefixes -ASN $_ }
-$ASNPrefixes | Sort-Object -Unique | Out-File -FilePath "asn_ip_ranges.txt" -Encoding utf8 -Force
+$ASNPrefixes | Sort-Object -Unique | Set-Content  "asn_ip_ranges.txt"
 ```
 
 ## Functions
