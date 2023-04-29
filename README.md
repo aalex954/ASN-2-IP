@@ -57,12 +57,14 @@ $ASNPrefixes | Sort-Object -Unique | Out-File -FilePath "asn_ip_ranges.txt" -Enc
 
 Returns a list of strings representing all AS Numbers owned by an organization.
 It queries the BGPView API to get the AS Numbers associated with the specified organization name.
-Takes an optional param of {url} representing the organization name in a ARIN WHOIS record.
-If no {url} param is provided, the organization name defaults to "microsoft".
+Takes a mandatory param of {ORGANIZATION_NAME} representing the organization name in a ARIN WHOIS record.
+If no {ORGANIZATION_NAME} param is provided, the organization name defaults to "microsoft".
 
 ```powershell
 Get-ASNInfo -ORGANIZATION_NAME
 ```
+
+> The BGPView API performs a contains search and as such may return some urealted results. Ensure the output is correct by reviewing the 'UniqueNames' and 'UniqueDescriptions' in the analytics output.
 
 ### Get-ASNPrefixes
 
@@ -86,11 +88,14 @@ Write-ASNAnalytics
 
 ### Run
 
-The main function that runs with default values or a provided organization name. It calls the other functions to retrieve AS Numbers, get the associated IP prefixes, and write the analytics information to the console and text files.
+The main function that runs with default values or a provided organization name. 
+It calls the other functions to retrieve AS Numbers, get the associated IP prefixes, and write the analytics information to the console and text files.
 
 ```powershell
 Run -organizationName $ORGANIZATION_NAME
 ```
+
+---
 
 ![ASN-2-IP_1](https://user-images.githubusercontent.com/6628565/233575960-5d92e9cb-8152-4056-9be1-99fedc6e5626.jpg)
 ![ASN-2-IP_2](https://user-images.githubusercontent.com/6628565/233574774-fdfeb143-8a32-4b40-9ac6-7cd1542ef6c4.jpg)
