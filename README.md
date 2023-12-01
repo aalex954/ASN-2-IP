@@ -10,13 +10,34 @@ When the script is executed, it fetches AS Numbers associated with the specified
 Output Analytics....
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 UniqueCountryCodesCount: 4
-UniqueASN: 3598,5761,6182,6584,8068,8069,8070,8071,8075,12076,13399,14271,14719,20046,23468,35106,45139,52985,395496,395524,395851,396463,398575,398656,400572
-UniqueASNCount: 25
-UniqueNames: AZURE-MICROSOFT-PEERING,MICROSOFT,Microsoft do Brasil Imp. e Com. Software e Video G,MICROSOFT-AS-AP,MICROSOFT-AZURE-DEDICATED,MICROSOFT-AZURE-DEDICATED,MICROSOFT-AZURE-ORBITAL,MICROSOFT-BOS,MICROSOFT-CORP-AS,MICROSOFT-CORP-AS-BLOCK-MSIT,MICROSOFT-CORP-AS-BLOCK-MSIT2,MICROSOFT-CORP-AS-BLOCK-MSIT3,MICROSOFT-CORP-AS-BLOCK-MSIT4,MICROSOFT-CORP-BCENTRAL,MICROSOFT-CORP-MSN-AS-2,MICROSOFT-CORP-MSN-AS-4,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-SATURN,MICROSOFT-CORP-XBOX-ONLINE,MICROSOFT-GP-AS,MICROSOFT-LIVE-MEETING
-UniqueNamesCount: 20
-UniqueDescriptions: Microsoft Corp,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation AS8075,Microsoft do Brasil Imp. e Com. Software e Video G,Proconex Inc.
-UniqueDescriptionsCount: 5
-UniquePrefixCount: 823
+UniqueASN: 3598,5761,6182,6584,8068,8069,8070,8071,8075,12076,12233,13399,14271,14719,20046,23468,
+35106,45139,52985,395496,395524,395851,396463,398575,398656,400572
+
+UniqueASNCount: 26
+
+UniqueNames:
+AZURE-MICROSOFT-PEERING,MICROSOFT,Microsoft do Brasil Imp. e Com. Software e Video G,
+MICROSOFT-AS-AP,MICROSOFT-AZURE-DEDICATED,MICROSOFT-AZURE-DEDICATED,MICROSOFT-AZURE-ORBITAL,
+MICROSOFT-BOS,MICROSOFT-CONNECTED-CACHE-POWERED-BY-NINJA-IX,MICROSOFT-CORP-AS,
+MICROSOFT-CORP-AS-BLOCK-MSIT,MICROSOFT-CORP-AS-BLOCK-MSIT2,MICROSOFT-CORP-AS-BLOCK-MSIT3,
+MICROSOFT-CORP-AS-BLOCK-MSIT4,MICROSOFT-CORP-BCENTRAL,MICROSOFT-CORP-MSN-AS-2,MICROSOFT-CORP-MSN-AS-4,
+MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,
+MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-BLOCK,MICROSOFT-CORP-MSN-AS-SATURN,
+MICROSOFT-CORP-XBOX-ONLINE,MICROSOFT-GP-AS,MICROSOFT-LIVE-MEETING
+
+UniqueNamesCount: 21
+
+UniqueDescriptions:
+Microsoft Corp,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,
+Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,
+Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,
+Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,
+Microsoft Corporation,Microsoft Corporation,Microsoft Corporation,Microsoft Corporation AS8075,
+Microsoft do Brasil Imp. e Com. Software e Video G,Ninja-IX Corporation,Proconex Inc.
+
+UniqueDescriptionsCount: 6
+
+UniquePrefixCount: 1003
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
 ```
